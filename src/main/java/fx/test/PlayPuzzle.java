@@ -27,7 +27,12 @@ public class PlayPuzzle {
         String letters = generatePuzzle.getHarfler();
         Pattern pattern = Pattern.compile("[^"+letters+"]");
         Matcher matcher = pattern.matcher(input);
-        return !matcher.find();
+        if(!matcher.find()){
+            return true;
+        }
+        else{
+            throw new RuntimeException("Sadece ekrandaki 7 harfi kullanabilirsiniz");
+        }
     }
 
     //pivot kullanildi mi return valuesu stringe cevirilebilir.
@@ -35,8 +40,12 @@ public class PlayPuzzle {
         String pivot = generatePuzzle.getHarfler().substring(0,1);
         Pattern pattern = Pattern.compile("["+pivot+"]");
         Matcher matcher = pattern.matcher(input);
-
-        return matcher.find();
+        if(matcher.find()){
+            return true;
+        }
+        else{
+            throw new RuntimeException("Pivot kullanmadiniz");
+        }
     }
 
     //puanlamayi olusturuyor scorela birlikte playpuzzle a al.
@@ -51,12 +60,15 @@ public class PlayPuzzle {
         }
     }
     //girilen kelime listede var mi icerideki words listesi abcd() fonksiyonuyla degistir
-    public boolean isExist(String word){
+    public boolean isExist(String word)  {
         if(words2.contains(word)){
             wordsFound.add(words2.get(words2.indexOf(word)));
-
+            return words2.contains(word);
         }
-        return words2.contains(word);
+        else{
+            throw new RuntimeException("Bu kelime sozlugumuzde bulunmuyor");
+        }
+
     }
     //girilen kelime daha once bulundu mu
     public  boolean isFound(String word){
