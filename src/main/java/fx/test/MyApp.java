@@ -1,7 +1,6 @@
 package fx.test;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -11,15 +10,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Thread.sleep;
 
@@ -27,20 +25,42 @@ public class MyApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        PuzzleInterface puzzleInterface = null;
         ListView exceptionList = new ListView();
         Label exceptionLabel = new Label();
         Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
             exceptionList.getItems().addAll(throwable.getMessage());
         });
-        GeneratePuzzle generatePuzzle = new GeneratePuzzle(new File("src/main/java/fx/test/sozluk_v2.txt"));
-        PlayPuzzle playPuzzle = new PlayPuzzle(generatePuzzle);
-        List<String> harfGetir = Arrays.stream(generatePuzzle.getHarfler().split("")).toList();
+
+
+
+        TextField kullaniciTextField = new TextField();
+        Button otoButon = new Button("Auto");
+        AtomicInteger jk = new AtomicInteger();
+        Button userButton = new Button("User");
+        List<String> ls = new ArrayList<>();
+        File file = new File("src/main/java/fx/test/sozluk_v2.txt");
+        otoButon.setOnAction(e ->{
+            jk.set(0);
+        });
+        userButton.setOnAction(e -> {
+            ls.add(kullaniciTextField.getText());
+            jk.set(1);
+        });
+        if(jk.get() == 0){
+            puzzleInterface = new GeneratePuzzle(file);
+        }
+        else{
+
+            puzzleInterface = new GeneratePuzzleWithInput(file, ls.get(0));
+        }
+        PlayPuzzle playPuzzle = new PlayPuzzle(puzzleInterface);
+        List<String> harfGetir = Arrays.stream(puzzleInterface.getHarfler().split("")).toList();
 
         String goldenWord = harfGetir.get(0);
         ArrayList<String> harf = new ArrayList<>();
         for (int i = 1; i < harfGetir.size(); i++)
             harf.add(harfGetir.get(i));
-
 
         Label title = new Label("Group 56 Project" ); //scene1 borderpane e yazılacak
         VBox scene1VBox = new VBox();// scene1 right ına yazılacak içinde score ve listview tutacak
