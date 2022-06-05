@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GeneratePuzzle {
+public class GeneratePuzzle implements PuzzleInterface{
     private String[] alphabet ="abcçdefgğhıijklmnoöprsştuüvyz".split("");
     private File file;
     private List<String> words;
@@ -109,25 +109,6 @@ public class GeneratePuzzle {
                 }
             }
         }
-        boolean somebool = false;
-        for(int i = 0; i < wfd.size(); i++){
-            boolean isPangramexist = true;
-
-            for(int k = 0; k < harfler.length(); k++){
-                List<String> x  = Arrays.stream(wfd.get(i).split("")).toList();
-                if(wfd.get(i).length() < harfler.length()){
-                    isPangramexist = false;
-                    break;}
-                isPangramexist = isPangramexist && x.contains(harfler.substring(k,k+1));
-            }
-            if(isPangramexist){
-                System.out.println(wfd.get(i));
-                somebool = true;
-                break;
-            }
-
-        }
-
 
         return wfd;
     }

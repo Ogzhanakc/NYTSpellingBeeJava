@@ -10,64 +10,76 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Polygon;
+import javafx.scene.text.Font;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 public class MyApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        ListView exceptionList = new ListView();
+        Label exceptionLabel = new Label();
         Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
-            System.out.println("Hata: "+throwable.getMessage());
+            exceptionList.getItems().addAll(throwable.getMessage());
         });
-        GeneratePuzzle generatePuzzle = new GeneratePuzzle(new File("C:\\Users\\mrtyl\\IdeaProjects\\NYTSpellingBeeJava\\src\\main\\java\\sozluk_v2.txt"));
+        GeneratePuzzle generatePuzzle = new GeneratePuzzle(new File("src/main/java/fx/test/sozluk_v2.txt"));
         PlayPuzzle playPuzzle = new PlayPuzzle(generatePuzzle);
         List<String> harfGetir = Arrays.stream(generatePuzzle.getHarfler().split("")).toList();
+
         String goldenWord = harfGetir.get(0);
         ArrayList<String> harf = new ArrayList<>();
         for (int i = 1; i < harfGetir.size(); i++)
             harf.add(harfGetir.get(i));
 
 
-        Label title = new Label(generatePuzzle.getHarfler()); //scene1 borderpane e yazılacak
+        Label title = new Label("Group 56 Project" ); //scene1 borderpane e yazılacak
         VBox scene1VBox = new VBox();// scene1 right ına yazılacak içinde score ve listview tutacak
         ListView correctWords = new ListView();// vbox ın 2. elemanı
-        scene1VBox.getChildren().addAll(title, correctWords);
+        Label score = new Label("Score: " + playPuzzle.getScore());
+        scene1VBox.getChildren().addAll(score,correctWords);
+
+
 
         BorderPane sceneBorderPane = new BorderPane();//kullanıcının seçeceği
         Scene scene = new Scene(sceneBorderPane, 300, 250);
         BorderPane scene1BorderPane = new BorderPane();
-        scene1BorderPane.setCenter(anchorPane(harf, correctWords, goldenWord, playPuzzle));
+        scene1BorderPane.setCenter(anchorPane(harf, correctWords, goldenWord, playPuzzle,score));
+        scene1BorderPane.setAlignment(anchorPane(harf, correctWords, goldenWord, playPuzzle,score),Pos.CENTER);
         scene1BorderPane.setRight(scene1VBox);
         scene1BorderPane.setTop(title);
+        scene1BorderPane.setAlignment(title,Pos.CENTER);
+        scene1BorderPane.setLeft(exceptionList);
         Scene scene1 = new Scene(scene1BorderPane, 500, 500);
 
 
         //---------------------------------------------------------------------------------
         //ANA EKRANA ÇIKAN İLK SAYFA FONTLARLA OYNANACAK VAKİT KALIRSA
         Label questionLabel = new Label("Choose Your Game");
-        ChoiceBox choiceBox = new ChoiceBox(FXCollections.observableArrayList("AUTOMATIC", "MYSELF"));//Devamına ChoiceBox event handler
-        Label infoLabel = new Label("PLEASE kelimeyi girin");
-        TextField myselfTextField = new TextField();
-        myselfTextField.setMaxWidth(100);
-        VBox sceneVBox = new VBox(questionLabel, choiceBox, infoLabel, myselfTextField);
+        Button autoButton = new Button("AUTOMATIC");
+        autoButton.setOnAction(e-> {
+            stage.setScene(scene1);
+        });
+        Button myselfButton = new Button("MYSELF");
+        myselfButton.setOnAction(e->{
+            stage.setScene(scene1);
+        });
+        VBox sceneVBox = new VBox(questionLabel,autoButton,myselfButton);
         sceneVBox.setSpacing(10);//vboxtaki elemanlar arasındaki boşluk
         sceneVBox.setMaxSize(150, 50);//sınır belirtmezsem ortaya almıyor tamamını kaplıyor
         sceneBorderPane.setCenter(sceneVBox);
         sceneBorderPane.setAlignment(sceneVBox, Pos.CENTER);
-        Button nextButton = new Button("Next ->");
-        nextButton.setOnAction(e -> {
-            //OTOMATİK Mİ SEÇİLMİŞ ELLE Mİ SEÇİLMİŞ İKİSİNİN Kontrolünü ve Diğer sahneye geçişini kontrol eder
-            stage.setScene(scene1);
-        });
-        nextButton.setPrefSize(70, 70);
-        sceneBorderPane.setRight(nextButton);
-        sceneBorderPane.setAlignment(nextButton, Pos.BOTTOM_RIGHT);
+
+
         //----------------------------------------------------------------------------
 
 
@@ -77,7 +89,7 @@ public class MyApp extends Application {
     }
 
 
-    private AnchorPane anchorPane(ArrayList<String> arrayList, ListView listView, String goldenWord, PlayPuzzle playPuzzle) {
+    private AnchorPane anchorPane(ArrayList<String> arrayList, ListView listView, String goldenWord, PlayPuzzle playPuzzle,Label score) {
         AnchorPane anchorPane = new AnchorPane();
         ArrayList<String> textFieldArray = new ArrayList<>();
 
@@ -96,6 +108,7 @@ public class MyApp extends Application {
         goldenButton.setShape(hexagonMaker());
         goldenButton.setStyle("-fx-background-color: #FFFF66; -fx-border-color: #000000");
         goldenButton.setPrefSize(70, 70);
+        goldenButton.setFont(Font.font(15));
         goldenButton.setOnAction(e -> {
             textFieldArray.add(goldenButton.getText());
             textField.setText(String.join("", textFieldArray));
@@ -111,6 +124,7 @@ public class MyApp extends Application {
         normalButton1.setShape(hexagonMaker());
         normalButton1.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #000000");
         normalButton1.setPrefSize(70, 70);
+        normalButton1.setFont(Font.font(15));
         anchorPane.setTopAnchor(normalButton1, 179.0);
         anchorPane.setLeftAnchor(normalButton1, 250.0);
         normalButton1.setOnAction(e -> {
@@ -124,6 +138,7 @@ public class MyApp extends Application {
         normalButton2.setShape(hexagonMaker());
         normalButton2.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #000000");
         normalButton2.setPrefSize(70, 70);
+        normalButton2.setFont(Font.font(15));
         anchorPane.setTopAnchor(normalButton2, 215.0);
         anchorPane.setLeftAnchor(normalButton2, (250.0 - (35 * Math.sqrt(3))));
         normalButton2.setOnAction(e -> {
@@ -137,6 +152,7 @@ public class MyApp extends Application {
         normalButton3.setShape(hexagonMaker());
         normalButton3.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #000000");
         normalButton3.setPrefSize(70, 70);
+        normalButton3.setFont(Font.font(15));
         anchorPane.setTopAnchor(normalButton3, 285.0);
         anchorPane.setLeftAnchor(normalButton3, (250.0 - (35 * Math.sqrt(3))));
         normalButton3.setOnAction(e -> {
@@ -150,6 +166,7 @@ public class MyApp extends Application {
         normalButton4.setShape(hexagonMaker());
         normalButton4.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #000000");
         normalButton4.setPrefSize(70, 70);
+        normalButton4.setFont(Font.font(15));
         anchorPane.setTopAnchor(normalButton4, 321.0);
         anchorPane.setLeftAnchor(normalButton4, 250.0);
         normalButton4.setOnAction(e -> {
@@ -163,6 +180,7 @@ public class MyApp extends Application {
         normalButton5.setShape(hexagonMaker());
         normalButton5.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #000000");
         normalButton5.setPrefSize(70, 70);
+        normalButton5.setFont(Font.font(15));
         anchorPane.setTopAnchor(normalButton5, 285.0);
         anchorPane.setLeftAnchor(normalButton5, (250.0 + (35 * Math.sqrt(3))));
         normalButton5.setOnAction(e -> {
@@ -176,6 +194,7 @@ public class MyApp extends Application {
         normalButton6.setShape(hexagonMaker());
         normalButton6.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #000000");
         normalButton6.setPrefSize(70, 70);
+        normalButton6.setFont(Font.font(15));
         anchorPane.setTopAnchor(normalButton6, 215.0);
         anchorPane.setLeftAnchor(normalButton6, (250.0 + (35 * Math.sqrt(3))));
         normalButton6.setOnAction(e -> {
@@ -191,11 +210,14 @@ public class MyApp extends Application {
         enterButton.setOnAction(e -> {
             if (!(playPuzzle.isPivotUsed(textField.getText())) | !(playPuzzle.isExist(textField.getText())) |
                     !(playPuzzle.contains(textField.getText())) | !(playPuzzle.isFound(textField.getText())) | (listView.getItems().contains(textField.getText()))) {
-                textField.clear();
                 textFieldArray.clear();
-                System.out.println("YOK");
+                textField.clear();
+
             } else {
+
                 listView.getItems().addAll(textField.getText());
+                playPuzzle.setScore(textField.getText());
+                score.setText("Score : " + playPuzzle.getScore());
                 textField.clear();
                 textFieldArray.clear();
             }
@@ -213,7 +235,7 @@ public class MyApp extends Application {
         //DeleteButton----------------------------------
 
         //MixButton----------------------------------
-        Button mixButton = new Button("Mix");
+        Button mixButton = new Button("Shuffle");
         mixButton.setPrefSize(70, 40);
         mixButton.setOnAction(e -> {
             Collections.shuffle(arrayList);

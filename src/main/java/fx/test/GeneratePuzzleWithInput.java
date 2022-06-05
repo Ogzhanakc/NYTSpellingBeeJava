@@ -9,7 +9,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GeneratePuzzleWithInput {
+public class GeneratePuzzleWithInput implements PuzzleInterface {
 
     private final String[] alphabet ="abcçdefgğhıijklmnoöprsştuüvyz".split("");
     private final File file;

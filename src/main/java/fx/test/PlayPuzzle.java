@@ -7,13 +7,13 @@ public class PlayPuzzle {
 
 
 
-    private GeneratePuzzle generatePuzzle;
+    private PuzzleInterface generatePuzzle;
     private int score;
     private List<String> words2;
     private List<String> words;
     private List<String> wordsFound;
 
-    public PlayPuzzle(GeneratePuzzle generatePuzzle) {
+    public PlayPuzzle(PuzzleInterface generatePuzzle) {
         this.generatePuzzle = generatePuzzle;
 
         this.words2 = generatePuzzle.getWords2();
@@ -50,15 +50,20 @@ public class PlayPuzzle {
 
     //puanlamayi olusturuyor scorela birlikte playpuzzle a al.
     public void setScore(String word){
-        if(isFound(word) && !isExist(word)){
+
             if(word.length() == 7){
                 score += 20;
             }
             else{
                 score += word.length() * 2;
             }
-        }
+
     }
+
+    public int getScore() {
+        return score;
+    }
+
     //girilen kelime listede var mi icerideki words listesi abcd() fonksiyonuyla degistir
     public boolean isExist(String word)  {
         if(words2.contains(word)){
