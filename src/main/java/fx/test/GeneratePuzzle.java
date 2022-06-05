@@ -31,10 +31,15 @@ public class GeneratePuzzle {
     public GeneratePuzzle(File file) throws FileNotFoundException {
         this.file=file;
         this.words = this.readWords();
-        this.harfler = getLetters();
         this.words2 = abcd();
+        while(checkList(words2) == false){
+            words2.clear();
+            this.words2 = abcd();
+        }
+    }
 
-
+    public void setHarfler(String harfler) {
+        this.harfler = harfler;
     }
 
     public String getHarfler() {
@@ -88,7 +93,8 @@ public class GeneratePuzzle {
 
     //elimizdeki harflerle bulunabilen kelimeler.
     public List<String> abcd(){
-       String letters = harfler;
+        this.harfler = getLetters();
+        String letters = harfler;
 
         Pattern pivot = Pattern.compile("["+letters.substring(0,1) +"]" );
         Pattern pattern = Pattern.compile("[^"+letters+"]");
@@ -103,11 +109,54 @@ public class GeneratePuzzle {
                 }
             }
         }
-        if(wfd.size() < 20)
-            abcd();
+        boolean somebool = false;
+        for(int i = 0; i < wfd.size(); i++){
+            boolean isPangramexist = true;
+
+            for(int k = 0; k < harfler.length(); k++){
+                List<String> x  = Arrays.stream(wfd.get(i).split("")).toList();
+                if(wfd.get(i).length() < harfler.length()){
+                    isPangramexist = false;
+                    break;}
+                isPangramexist = isPangramexist && x.contains(harfler.substring(k,k+1));
+            }
+            if(isPangramexist){
+                System.out.println(wfd.get(i));
+                somebool = true;
+                break;
+            }
+
+        }
+
+
         return wfd;
     }
 
+
+    public boolean checkList(List<String> list){
+        boolean somebool = false;
+        for(int i = 0; i < list.size(); i++){
+            boolean isPangramexist = true;
+
+            for(int k = 0; k < harfler.length(); k++){
+                List<String> x  = Arrays.stream(list.get(i).split("")).toList();
+                if(list.get(i).length() < harfler.length()){
+                    isPangramexist = false;
+                    break;}
+                isPangramexist = isPangramexist && x.contains(harfler.substring(k,k+1));
+            }
+            if(isPangramexist){
+                System.out.println(list.get(i));
+                somebool = true;
+                break;
+            }
+
+        }
+        if(list.size() < 20 | somebool == false){
+            return false;
+        }
+        return true;
+    }
 
 
 
